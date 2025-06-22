@@ -1,0 +1,783 @@
+2025-06-01 23:17:00.282 INFO: MACE version: 0.3.6
+2025-06-01 23:17:00.282 INFO: Configuration: Namespace(config='benchmark_results/mace_learncurve_train400.yaml', name='mace_learncurve_train400', seed=123, log_dir='MACE_models', model_dir='MACE_models', checkpoints_dir='MACE_models', results_dir='MACE_models', downloads_dir='downloads', device='cuda', default_dtype='float64', distributed=False, log_level='INFO', error_table='PerAtomRMSE', model='MACE', r_max=4.0, radial_type='bessel', num_radial_basis=8, num_cutoff_basis=5, pair_repulsion=False, distance_transform='None', interaction='RealAgnosticResidualInteractionBlock', interaction_first='RealAgnosticResidualInteractionBlock', max_ell=2, correlation=3, num_interactions=3, MLP_irreps='16x0e', radial_MLP='[64, 64, 64]', hidden_irreps='128x0e + 128x1o', num_channels=64, max_L=2, gate='silu', scaling='rms_forces_scaling', avg_num_neighbors=1, compute_avg_num_neighbors=True, compute_stress=False, compute_forces=True, train_file='data/solvent_xtb_train_400.xyz', valid_file=None, valid_fraction=0.1, test_file='data/solvent_xtb_test.xyz', test_dir=None, multi_processed_test=False, num_workers=0, pin_memory=True, atomic_numbers=None, mean=None, std=None, statistics_file=None, E0s='average', keep_isolated_atoms=False, energy_key='energy_xtb', forces_key='forces_xtb', virials_key='virials', stress_key='stress', dipole_key='dipole', charges_key='charges', loss='weighted', forces_weight=100.0, swa_forces_weight=100.0, energy_weight=1.0, swa_energy_weight=1000.0, virials_weight=1.0, swa_virials_weight=10.0, stress_weight=1.0, swa_stress_weight=10.0, dipole_weight=1.0, swa_dipole_weight=1.0, config_type_weights='{"Default":1.0}', huber_delta=0.01, optimizer='adam', beta=0.9, batch_size=10, valid_batch_size=10, lr=0.01, swa_lr=0.001, weight_decay=5e-07, amsgrad=True, scheduler='ReduceLROnPlateau', lr_factor=0.8, scheduler_patience=50, lr_scheduler_gamma=0.9993, swa=True, start_swa=None, ema=False, ema_decay=0.99, max_num_epochs=50, patience=2048, foundation_model=None, foundation_model_readout=True, eval_interval=2, keep_checkpoints=False, save_all_checkpoints=False, restart_latest=False, save_cpu=False, clip_grad=10.0, wandb=False, wandb_dir=None, wandb_project='', wandb_entity='', wandb_name='', wandb_log_hypers=['num_channels', 'max_L', 'correlation', 'lr', 'swa_lr', 'weight_decay', 'batch_size', 'max_num_epochs', 'start_swa', 'energy_weight', 'forces_weight'])
+2025-06-01 23:17:00.373 INFO: CUDA version: 12.1, CUDA device: 0
+2025-06-01 23:17:00.410 INFO: Current Git commit: 3b7b691f60afdffc0cd66948e333883ae1689cd8
+2025-06-01 23:17:00.528 INFO: Since ASE version 3.23.0b1, using stress_key 'stress' is no longer safe when communicating between MACE and ASE. We recommend using a different key, rewriting energies to 'REF_stress'. You need to use --stress_key='REF_stress', to tell the key name chosen.
+2025-06-01 23:17:00.528 INFO: Using isolated atom energies from training file
+2025-06-01 23:17:00.536 INFO: Loaded 400 training configurations from 'data/solvent_xtb_train_400.xyz'
+2025-06-01 23:17:00.536 INFO: Using random 10.0% of training set for validation
+2025-06-01 23:17:00.789 INFO: Since ASE version 3.23.0b1, using stress_key 'stress' is no longer safe when communicating between MACE and ASE. We recommend using a different key, rewriting energies to 'REF_stress'. You need to use --stress_key='REF_stress', to tell the key name chosen.
+2025-06-01 23:17:00.809 INFO: Loaded 1000 test configurations from 'data/solvent_xtb_test.xyz'
+2025-06-01 23:17:00.809 INFO: Total number of configurations: train=360, valid=40, tests=[Default: 1000]
+2025-06-01 23:17:00.811 INFO: AtomicNumberTable: (1, 6, 8)
+2025-06-01 23:17:00.811 INFO: Atomic energies: [-10.707211383396714, -48.847445262804705, -102.57117256025786]
+2025-06-01 23:17:01.015 INFO: WeightedEnergyForcesLoss(energy_weight=1.000, forces_weight=100.000)
+2025-06-01 23:17:01.209 INFO: Average number of neighbors: 9.929327941459658
+2025-06-01 23:17:01.209 INFO: Selected the following outputs: {'energy': True, 'forces': True, 'virials': False, 'stress': False, 'dipoles': False}
+2025-06-01 23:17:01.286 INFO: Building model
+2025-06-01 23:17:01.381 INFO: Hidden irreps: 64x0e+64x1o+64x2e
+2025-06-01 23:17:02.856 INFO: Using stochastic weight averaging (after 36 epochs) with energy weight : 1000.0, forces weight : 100.0 and learning rate : 0.001
+2025-06-01 23:17:02.978 INFO: ScaleShiftMACE(
+  (node_embedding): LinearNodeEmbeddingBlock(
+    (linear): Linear(3x0e -> 64x0e | 192 weights)
+  )
+  (radial_embedding): RadialEmbeddingBlock(
+    (bessel_fn): BesselBasis(r_max=4.0, num_basis=8, trainable=False)
+    (cutoff_fn): PolynomialCutoff(p=5.0, r_max=4.0)
+  )
+  (spherical_harmonics): SphericalHarmonics()
+  (atomic_energies_fn): AtomicEnergiesBlock(energies=[-10.7072, -48.8474, -102.5712])
+  (interactions): ModuleList(
+    (0): RealAgnosticInteractionBlock(
+      (linear_up): Linear(64x0e -> 64x0e | 4096 weights)
+      (conv_tp): TensorProduct(64x0e x 1x0e+1x1o+1x2e -> 64x0e+64x1o+64x2e | 192 paths | 192 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 192]
+      (linear): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+      (skip_tp): FullyConnectedTensorProduct(64x0e+64x1o+64x2e x 3x0e -> 64x0e+64x1o+64x2e | 36864 paths | 36864 weights)
+      (reshape): reshape_irreps()
+    )
+    (1): RealAgnosticResidualInteractionBlock(
+      (linear_up): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+      (conv_tp): TensorProduct(64x0e+64x1o+64x2e x 1x0e+1x1o+1x2e -> 192x0e+256x1o+256x2e | 704 paths | 704 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 704]
+      (linear): Linear(192x0e+256x1o+256x2e -> 64x0e+64x1o+64x2e | 45056 weights)
+      (skip_tp): FullyConnectedTensorProduct(64x0e+64x1o+64x2e x 3x0e -> 64x0e+64x1o+64x2e | 36864 paths | 36864 weights)
+      (reshape): reshape_irreps()
+    )
+    (2): RealAgnosticResidualInteractionBlock(
+      (linear_up): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+      (conv_tp): TensorProduct(64x0e+64x1o+64x2e x 1x0e+1x1o+1x2e -> 192x0e+256x1o+256x2e | 704 paths | 704 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 704]
+      (linear): Linear(192x0e+256x1o+256x2e -> 64x0e+64x1o+64x2e | 45056 weights)
+      (skip_tp): FullyConnectedTensorProduct(64x0e+64x1o+64x2e x 3x0e -> 64x0e | 12288 paths | 12288 weights)
+      (reshape): reshape_irreps()
+    )
+  )
+  (products): ModuleList(
+    (0-1): 2 x EquivariantProductBasisBlock(
+      (symmetric_contractions): SymmetricContraction(
+        (contractions): ModuleList(
+          (0): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x3x64 (cuda:0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x64 (cuda:0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+          (1-2): 2 x Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x4x64 (cuda:0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x64 (cuda:0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+        )
+      )
+      (linear): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+    )
+    (2): EquivariantProductBasisBlock(
+      (symmetric_contractions): SymmetricContraction(
+        (contractions): ModuleList(
+          (0): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x3x64 (cuda:0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x64 (cuda:0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+        )
+      )
+      (linear): Linear(64x0e -> 64x0e | 4096 weights)
+    )
+  )
+  (readouts): ModuleList(
+    (0-1): 2 x LinearReadoutBlock(
+      (linear): Linear(64x0e+64x1o+64x2e -> 1x0e | 64 weights)
+    )
+    (2): NonLinearReadoutBlock(
+      (linear_1): Linear(64x0e -> 16x0e | 1024 weights)
+      (non_linearity): Activation [x] (16x0e -> 16x0e)
+      (linear_2): Linear(16x0e -> 1x0e | 16 weights)
+    )
+  )
+  (scale_shift): ScaleShiftBlock(scale=2.471057, shift=0.000000)
+)
+2025-06-01 23:17:02.981 INFO: Number of parameters: 405008
+2025-06-01 23:17:02.981 INFO: Optimizer: Adam (
+Parameter Group 0
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: embedding
+    swa_lr: 0.001
+    weight_decay: 0.0
+
+Parameter Group 1
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: interactions_decay
+    swa_lr: 0.001
+    weight_decay: 5e-07
+
+Parameter Group 2
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: interactions_no_decay
+    swa_lr: 0.001
+    weight_decay: 0.0
+
+Parameter Group 3
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: products
+    swa_lr: 0.001
+    weight_decay: 5e-07
+
+Parameter Group 4
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: readouts
+    swa_lr: 0.001
+    weight_decay: 0.0
+)
+2025-06-01 23:17:02.981 INFO: Using gradient clipping with tolerance=10.000
+2025-06-01 23:17:02.981 INFO: Started training
+2025-06-01 23:17:05.351 INFO: Epoch None: loss=65.3744, RMSE_E_per_atom=6200.4 meV, RMSE_F=2517.3 meV / A
+2025-06-01 23:17:19.256 INFO: Epoch 0: loss=9.8561, RMSE_E_per_atom=4351.3 meV, RMSE_F=896.5 meV / A
+2025-06-01 23:17:38.708 INFO: Epoch 2: loss=4.4978, RMSE_E_per_atom=3055.9 meV, RMSE_F=595.8 meV / A
+2025-06-01 23:17:58.329 INFO: Epoch 4: loss=2.2275, RMSE_E_per_atom=1289.8 meV, RMSE_F=455.2 meV / A
+2025-06-01 23:18:17.943 INFO: Epoch 6: loss=1.8773, RMSE_E_per_atom=785.1 meV, RMSE_F=425.2 meV / A
+2025-06-01 23:18:37.498 INFO: Epoch 8: loss=0.9667, RMSE_E_per_atom=359.0 meV, RMSE_F=308.4 meV / A
+2025-06-01 23:18:57.306 INFO: Epoch 10: loss=0.8306, RMSE_E_per_atom=315.5 meV, RMSE_F=285.3 meV / A
+2025-06-01 23:19:16.915 INFO: Epoch 12: loss=0.8165, RMSE_E_per_atom=261.4 meV, RMSE_F=282.7 meV / A
+2025-06-01 23:19:36.474 INFO: Epoch 14: loss=0.6771, RMSE_E_per_atom=238.2 meV, RMSE_F=258.2 meV / A
+2025-06-01 23:19:56.024 INFO: Epoch 16: loss=0.4055, RMSE_E_per_atom=150.0 meV, RMSE_F=197.2 meV / A
+2025-06-01 23:20:15.649 INFO: Epoch 18: loss=0.7631, RMSE_E_per_atom=113.1 meV, RMSE_F=274.5 meV / A
+2025-06-01 23:20:35.095 INFO: Epoch 20: loss=0.4867, RMSE_E_per_atom=195.0 meV, RMSE_F=217.8 meV / A
+2025-06-01 23:20:54.456 INFO: Epoch 22: loss=0.6495, RMSE_E_per_atom=86.4 meV, RMSE_F=253.4 meV / A
+2025-06-01 23:21:13.758 INFO: Epoch 24: loss=0.5307, RMSE_E_per_atom=56.7 meV, RMSE_F=228.1 meV / A
+2025-06-01 23:21:33.244 INFO: Epoch 26: loss=0.7301, RMSE_E_per_atom=70.0 meV, RMSE_F=269.0 meV / A
+2025-06-01 23:21:52.648 INFO: Epoch 28: loss=0.6029, RMSE_E_per_atom=18.1 meV, RMSE_F=246.1 meV / A
+2025-06-01 23:22:11.991 INFO: Epoch 30: loss=0.4783, RMSE_E_per_atom=159.1 meV, RMSE_F=217.1 meV / A
+2025-06-01 23:22:31.315 INFO: Epoch 32: loss=0.4766, RMSE_E_per_atom=126.2 meV, RMSE_F=216.0 meV / A
+2025-06-01 23:22:50.681 INFO: Epoch 34: loss=0.5667, RMSE_E_per_atom=28.3 meV, RMSE_F=237.1 meV / A
+2025-06-01 23:23:00.156 INFO: Changing loss based on SWA
+2025-06-01 23:23:10.039 INFO: Epoch 36: loss=0.3156, RMSE_E_per_atom=7.5 meV, RMSE_F=172.1 meV / A
+2025-06-01 23:23:29.632 INFO: Epoch 38: loss=0.2778, RMSE_E_per_atom=12.0 meV, RMSE_F=158.2 meV / A
+2025-06-01 23:23:49.260 INFO: Epoch 40: loss=0.2634, RMSE_E_per_atom=8.4 meV, RMSE_F=156.0 meV / A
+2025-06-01 23:24:08.928 INFO: Epoch 42: loss=0.2829, RMSE_E_per_atom=16.7 meV, RMSE_F=155.2 meV / A
+2025-06-01 23:24:28.250 INFO: Epoch 44: loss=0.2604, RMSE_E_per_atom=9.2 meV, RMSE_F=154.4 meV / A
+2025-06-01 23:24:47.820 INFO: Epoch 46: loss=0.2771, RMSE_E_per_atom=17.1 meV, RMSE_F=152.8 meV / A
+2025-06-01 23:25:07.133 INFO: Epoch 48: loss=0.2675, RMSE_E_per_atom=15.7 meV, RMSE_F=151.5 meV / A
+2025-06-01 23:25:16.621 INFO: Training complete
+2025-06-01 23:25:16.622 INFO: Computing metrics for training, validation, and test sets
+2025-06-01 23:25:17.087 INFO: Loading checkpoint: MACE_models/mace_learncurve_train400_run-123_epoch-16.pt
+2025-06-01 23:25:17.132 INFO: Loaded model from epoch 16
+2025-06-01 23:25:17.133 INFO: Evaluating train ...
+2025-06-01 23:25:20.506 INFO: Evaluating valid ...
+2025-06-01 23:25:20.926 INFO: Evaluating Default ...
+2025-06-01 23:25:30.622 INFO: 
++-------------+---------------------+------------------+-------------------+
+| config_type | RMSE E / meV / atom | RMSE F / meV / A | relative F RMSE % |
++-------------+---------------------+------------------+-------------------+
+|    train    |        146.9        |      171.3       |        6.93       |
+|    valid    |        150.0        |      197.2       |        7.95       |
+|   Default   |        149.0        |      191.2       |        8.35       |
++-------------+---------------------+------------------+-------------------+
+2025-06-01 23:25:30.622 INFO: Saving model to MACE_models/mace_learncurve_train400_run-123.model
+2025-06-01 23:25:30.858 INFO: Compiling model, saving metadata to MACE_models/mace_learncurve_train400_compiled.model
+2025-06-01 23:25:32.210 INFO: Loading checkpoint: MACE_models/mace_learncurve_train400_run-123_epoch-44_swa.pt
+2025-06-01 23:25:32.270 INFO: Loaded model from epoch 44
+2025-06-01 23:25:32.271 INFO: Evaluating train ...
+2025-06-01 23:25:35.613 INFO: Evaluating valid ...
+2025-06-01 23:25:36.041 INFO: Evaluating Default ...
+2025-06-01 23:25:45.779 INFO: 
++-------------+---------------------+------------------+-------------------+
+| config_type | RMSE E / meV / atom | RMSE F / meV / A | relative F RMSE % |
++-------------+---------------------+------------------+-------------------+
+|    train    |         8.9         |       88.1       |        3.56       |
+|    valid    |         9.2         |      154.4       |        6.23       |
+|   Default   |         8.6         |      123.4       |        5.39       |
++-------------+---------------------+------------------+-------------------+
+2025-06-01 23:25:45.779 INFO: Saving model to MACE_models/mace_learncurve_train400_run-123_swa.model
+2025-06-01 23:25:45.994 INFO: Compiling model, saving metadata MACE_models/mace_learncurve_train400_swa_compiled.model
+2025-06-01 23:25:47.208 INFO: Done
+2025-06-02 18:37:12.068 INFO: MACE version: 0.3.6
+2025-06-02 18:37:12.069 INFO: Configuration: Namespace(config='benchmark_results/mace_learncurve_train400.yaml', name='mace_learncurve_train400', seed=123, log_dir='MACE_models', model_dir='MACE_models', checkpoints_dir='MACE_models', results_dir='MACE_models', downloads_dir='downloads', device='cuda', default_dtype='float64', distributed=False, log_level='INFO', error_table='PerAtomRMSE', model='MACE', r_max=4.0, radial_type='bessel', num_radial_basis=8, num_cutoff_basis=5, pair_repulsion=False, distance_transform='None', interaction='RealAgnosticResidualInteractionBlock', interaction_first='RealAgnosticResidualInteractionBlock', max_ell=2, correlation=3, num_interactions=3, MLP_irreps='16x0e', radial_MLP='[64, 64, 64]', hidden_irreps='128x0e + 128x1o', num_channels=64, max_L=2, gate='silu', scaling='rms_forces_scaling', avg_num_neighbors=1, compute_avg_num_neighbors=True, compute_stress=False, compute_forces=True, train_file='data/solvent_xtb_train_400.xyz', valid_file=None, valid_fraction=0.1, test_file='data/solvent_xtb_test.xyz', test_dir=None, multi_processed_test=False, num_workers=0, pin_memory=True, atomic_numbers=None, mean=None, std=None, statistics_file=None, E0s='average', keep_isolated_atoms=False, energy_key='energy_xtb', forces_key='forces_xtb', virials_key='virials', stress_key='stress', dipole_key='dipole', charges_key='charges', loss='weighted', forces_weight=100.0, swa_forces_weight=100.0, energy_weight=1.0, swa_energy_weight=1000.0, virials_weight=1.0, swa_virials_weight=10.0, stress_weight=1.0, swa_stress_weight=10.0, dipole_weight=1.0, swa_dipole_weight=1.0, config_type_weights='{"Default":1.0}', huber_delta=0.01, optimizer='adam', beta=0.9, batch_size=10, valid_batch_size=10, lr=0.01, swa_lr=0.001, weight_decay=5e-07, amsgrad=True, scheduler='ReduceLROnPlateau', lr_factor=0.8, scheduler_patience=50, lr_scheduler_gamma=0.9993, swa=True, start_swa=None, ema=False, ema_decay=0.99, max_num_epochs=50, patience=2048, foundation_model=None, foundation_model_readout=True, eval_interval=2, keep_checkpoints=False, save_all_checkpoints=False, restart_latest=False, save_cpu=False, clip_grad=10.0, wandb=False, wandb_dir=None, wandb_project='', wandb_entity='', wandb_name='', wandb_log_hypers=['num_channels', 'max_L', 'correlation', 'lr', 'swa_lr', 'weight_decay', 'batch_size', 'max_num_epochs', 'start_swa', 'energy_weight', 'forces_weight'])
+2025-06-02 18:37:12.161 INFO: CUDA version: 12.1, CUDA device: 0
+2025-06-02 18:37:12.200 INFO: Current Git commit: 3b7b691f60afdffc0cd66948e333883ae1689cd8
+2025-06-02 18:37:12.319 INFO: Since ASE version 3.23.0b1, using stress_key 'stress' is no longer safe when communicating between MACE and ASE. We recommend using a different key, rewriting energies to 'REF_stress'. You need to use --stress_key='REF_stress', to tell the key name chosen.
+2025-06-02 18:37:12.319 INFO: Using isolated atom energies from training file
+2025-06-02 18:37:12.327 INFO: Loaded 400 training configurations from 'data/solvent_xtb_train_400.xyz'
+2025-06-02 18:37:12.327 INFO: Using random 10.0% of training set for validation
+2025-06-02 18:37:12.582 INFO: Since ASE version 3.23.0b1, using stress_key 'stress' is no longer safe when communicating between MACE and ASE. We recommend using a different key, rewriting energies to 'REF_stress'. You need to use --stress_key='REF_stress', to tell the key name chosen.
+2025-06-02 18:37:12.602 INFO: Loaded 1000 test configurations from 'data/solvent_xtb_test.xyz'
+2025-06-02 18:37:12.602 INFO: Total number of configurations: train=360, valid=40, tests=[Default: 1000]
+2025-06-02 18:37:12.604 INFO: AtomicNumberTable: (1, 6, 8)
+2025-06-02 18:37:12.604 INFO: Atomic energies: [-10.707211383396714, -48.847445262804705, -102.57117256025786]
+2025-06-02 18:37:12.806 INFO: WeightedEnergyForcesLoss(energy_weight=1.000, forces_weight=100.000)
+2025-06-02 18:37:12.999 INFO: Average number of neighbors: 9.929327941459658
+2025-06-02 18:37:12.999 INFO: Selected the following outputs: {'energy': True, 'forces': True, 'virials': False, 'stress': False, 'dipoles': False}
+2025-06-02 18:37:13.074 INFO: Building model
+2025-06-02 18:37:13.169 INFO: Hidden irreps: 64x0e+64x1o+64x2e
+2025-06-02 18:37:14.607 INFO: Using stochastic weight averaging (after 36 epochs) with energy weight : 1000.0, forces weight : 100.0 and learning rate : 0.001
+2025-06-02 18:37:14.728 INFO: ScaleShiftMACE(
+  (node_embedding): LinearNodeEmbeddingBlock(
+    (linear): Linear(3x0e -> 64x0e | 192 weights)
+  )
+  (radial_embedding): RadialEmbeddingBlock(
+    (bessel_fn): BesselBasis(r_max=4.0, num_basis=8, trainable=False)
+    (cutoff_fn): PolynomialCutoff(p=5.0, r_max=4.0)
+  )
+  (spherical_harmonics): SphericalHarmonics()
+  (atomic_energies_fn): AtomicEnergiesBlock(energies=[-10.7072, -48.8474, -102.5712])
+  (interactions): ModuleList(
+    (0): RealAgnosticInteractionBlock(
+      (linear_up): Linear(64x0e -> 64x0e | 4096 weights)
+      (conv_tp): TensorProduct(64x0e x 1x0e+1x1o+1x2e -> 64x0e+64x1o+64x2e | 192 paths | 192 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 192]
+      (linear): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+      (skip_tp): FullyConnectedTensorProduct(64x0e+64x1o+64x2e x 3x0e -> 64x0e+64x1o+64x2e | 36864 paths | 36864 weights)
+      (reshape): reshape_irreps()
+    )
+    (1): RealAgnosticResidualInteractionBlock(
+      (linear_up): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+      (conv_tp): TensorProduct(64x0e+64x1o+64x2e x 1x0e+1x1o+1x2e -> 192x0e+256x1o+256x2e | 704 paths | 704 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 704]
+      (linear): Linear(192x0e+256x1o+256x2e -> 64x0e+64x1o+64x2e | 45056 weights)
+      (skip_tp): FullyConnectedTensorProduct(64x0e+64x1o+64x2e x 3x0e -> 64x0e+64x1o+64x2e | 36864 paths | 36864 weights)
+      (reshape): reshape_irreps()
+    )
+    (2): RealAgnosticResidualInteractionBlock(
+      (linear_up): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+      (conv_tp): TensorProduct(64x0e+64x1o+64x2e x 1x0e+1x1o+1x2e -> 192x0e+256x1o+256x2e | 704 paths | 704 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 704]
+      (linear): Linear(192x0e+256x1o+256x2e -> 64x0e+64x1o+64x2e | 45056 weights)
+      (skip_tp): FullyConnectedTensorProduct(64x0e+64x1o+64x2e x 3x0e -> 64x0e | 12288 paths | 12288 weights)
+      (reshape): reshape_irreps()
+    )
+  )
+  (products): ModuleList(
+    (0-1): 2 x EquivariantProductBasisBlock(
+      (symmetric_contractions): SymmetricContraction(
+        (contractions): ModuleList(
+          (0): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x3x64 (cuda:0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x64 (cuda:0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+          (1-2): 2 x Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x4x64 (cuda:0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x64 (cuda:0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+        )
+      )
+      (linear): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+    )
+    (2): EquivariantProductBasisBlock(
+      (symmetric_contractions): SymmetricContraction(
+        (contractions): ModuleList(
+          (0): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x3x64 (cuda:0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x64 (cuda:0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+        )
+      )
+      (linear): Linear(64x0e -> 64x0e | 4096 weights)
+    )
+  )
+  (readouts): ModuleList(
+    (0-1): 2 x LinearReadoutBlock(
+      (linear): Linear(64x0e+64x1o+64x2e -> 1x0e | 64 weights)
+    )
+    (2): NonLinearReadoutBlock(
+      (linear_1): Linear(64x0e -> 16x0e | 1024 weights)
+      (non_linearity): Activation [x] (16x0e -> 16x0e)
+      (linear_2): Linear(16x0e -> 1x0e | 16 weights)
+    )
+  )
+  (scale_shift): ScaleShiftBlock(scale=2.471057, shift=0.000000)
+)
+2025-06-02 18:37:14.730 INFO: Number of parameters: 405008
+2025-06-02 18:37:14.731 INFO: Optimizer: Adam (
+Parameter Group 0
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: embedding
+    swa_lr: 0.001
+    weight_decay: 0.0
+
+Parameter Group 1
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: interactions_decay
+    swa_lr: 0.001
+    weight_decay: 5e-07
+
+Parameter Group 2
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: interactions_no_decay
+    swa_lr: 0.001
+    weight_decay: 0.0
+
+Parameter Group 3
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: products
+    swa_lr: 0.001
+    weight_decay: 5e-07
+
+Parameter Group 4
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: readouts
+    swa_lr: 0.001
+    weight_decay: 0.0
+)
+2025-06-02 18:37:14.731 INFO: Using gradient clipping with tolerance=10.000
+2025-06-02 18:37:14.731 INFO: Started training
+2025-06-02 18:37:17.141 INFO: Epoch None: loss=65.3744, RMSE_E_per_atom=6200.4 meV, RMSE_F=2517.3 meV / A
+2025-06-02 18:37:31.047 INFO: Epoch 0: loss=9.8561, RMSE_E_per_atom=4351.3 meV, RMSE_F=896.5 meV / A
+2025-06-02 18:37:50.495 INFO: Epoch 2: loss=4.4978, RMSE_E_per_atom=3055.9 meV, RMSE_F=595.8 meV / A
+2025-06-02 18:38:10.095 INFO: Epoch 4: loss=2.2275, RMSE_E_per_atom=1289.8 meV, RMSE_F=455.2 meV / A
+2025-06-02 18:38:29.779 INFO: Epoch 6: loss=1.8772, RMSE_E_per_atom=785.1 meV, RMSE_F=425.2 meV / A
+2025-06-02 18:38:49.290 INFO: Epoch 8: loss=0.9249, RMSE_E_per_atom=328.1 meV, RMSE_F=302.6 meV / A
+2025-06-02 18:39:08.817 INFO: Epoch 10: loss=0.6673, RMSE_E_per_atom=344.7 meV, RMSE_F=255.2 meV / A
+2025-06-02 18:39:28.441 INFO: Epoch 12: loss=0.7050, RMSE_E_per_atom=116.6 meV, RMSE_F=263.7 meV / A
+2025-06-02 18:39:47.742 INFO: Epoch 14: loss=0.5704, RMSE_E_per_atom=263.2 meV, RMSE_F=236.7 meV / A
+2025-06-02 18:40:07.237 INFO: Epoch 16: loss=0.7660, RMSE_E_per_atom=98.1 meV, RMSE_F=275.9 meV / A
+2025-06-02 18:40:26.598 INFO: Epoch 18: loss=1.0443, RMSE_E_per_atom=213.0 meV, RMSE_F=322.6 meV / A
+2025-06-02 18:40:45.914 INFO: Epoch 20: loss=0.5015, RMSE_E_per_atom=131.2 meV, RMSE_F=220.7 meV / A
+2025-06-02 18:41:05.474 INFO: Epoch 22: loss=0.5433, RMSE_E_per_atom=70.8 meV, RMSE_F=234.7 meV / A
+2025-06-02 18:41:24.750 INFO: Epoch 24: loss=1.0556, RMSE_E_per_atom=28.5 meV, RMSE_F=324.7 meV / A
+2025-06-02 18:41:44.070 INFO: Epoch 26: loss=0.3881, RMSE_E_per_atom=35.0 meV, RMSE_F=195.7 meV / A
+2025-06-02 18:42:03.801 INFO: Epoch 28: loss=0.4874, RMSE_E_per_atom=77.8 meV, RMSE_F=218.8 meV / A
+2025-06-02 18:42:23.213 INFO: Epoch 30: loss=0.4364, RMSE_E_per_atom=59.8 meV, RMSE_F=206.7 meV / A
+2025-06-02 18:42:42.528 INFO: Epoch 32: loss=0.5083, RMSE_E_per_atom=71.7 meV, RMSE_F=222.7 meV / A
+2025-06-02 18:43:01.877 INFO: Epoch 34: loss=0.4193, RMSE_E_per_atom=16.5 meV, RMSE_F=202.3 meV / A
+2025-06-02 18:43:11.338 INFO: Changing loss based on SWA
+2025-06-02 18:43:21.212 INFO: Epoch 36: loss=0.4372, RMSE_E_per_atom=40.8 meV, RMSE_F=160.5 meV / A
+2025-06-02 18:43:40.732 INFO: Epoch 38: loss=0.2828, RMSE_E_per_atom=13.8 meV, RMSE_F=157.7 meV / A
+2025-06-02 18:44:00.380 INFO: Epoch 40: loss=0.2752, RMSE_E_per_atom=13.0 meV, RMSE_F=156.0 meV / A
+2025-06-02 18:44:19.963 INFO: Epoch 42: loss=0.2704, RMSE_E_per_atom=4.5 meV, RMSE_F=159.5 meV / A
+2025-06-02 18:44:39.543 INFO: Epoch 44: loss=0.2751, RMSE_E_per_atom=12.1 meV, RMSE_F=157.0 meV / A
+2025-06-02 18:44:58.911 INFO: Epoch 46: loss=0.2571, RMSE_E_per_atom=5.2 meV, RMSE_F=154.8 meV / A
+2025-06-02 18:45:18.460 INFO: Epoch 48: loss=0.2486, RMSE_E_per_atom=4.6 meV, RMSE_F=152.3 meV / A
+2025-06-02 18:45:28.155 INFO: Training complete
+2025-06-02 18:45:28.155 INFO: Computing metrics for training, validation, and test sets
+2025-06-02 18:45:28.624 INFO: Loading checkpoint: MACE_models/mace_learncurve_train400_run-123_epoch-26.pt
+2025-06-02 18:45:28.672 INFO: Loaded model from epoch 26
+2025-06-02 18:45:28.672 INFO: Evaluating train ...
+2025-06-02 18:45:32.052 INFO: Evaluating valid ...
+2025-06-02 18:45:32.472 INFO: Evaluating Default ...
+2025-06-02 18:45:42.186 INFO: 
++-------------+---------------------+------------------+-------------------+
+| config_type | RMSE E / meV / atom | RMSE F / meV / A | relative F RMSE % |
++-------------+---------------------+------------------+-------------------+
+|    train    |         35.0        |      150.5       |        6.09       |
+|    valid    |         35.0        |      195.7       |        7.89       |
+|   Default   |         36.2        |      167.6       |        7.32       |
++-------------+---------------------+------------------+-------------------+
+2025-06-02 18:45:42.187 INFO: Saving model to MACE_models/mace_learncurve_train400_run-123.model
+2025-06-02 18:45:42.423 INFO: Compiling model, saving metadata to MACE_models/mace_learncurve_train400_compiled.model
+2025-06-02 18:45:43.813 INFO: Loading checkpoint: MACE_models/mace_learncurve_train400_run-123_epoch-48_swa.pt
+2025-06-02 18:45:43.868 INFO: Loaded model from epoch 48
+2025-06-02 18:45:43.868 INFO: Evaluating train ...
+2025-06-02 18:45:47.236 INFO: Evaluating valid ...
+2025-06-02 18:45:47.665 INFO: Evaluating Default ...
+2025-06-02 18:45:57.417 INFO: 
++-------------+---------------------+------------------+-------------------+
+| config_type | RMSE E / meV / atom | RMSE F / meV / A | relative F RMSE % |
++-------------+---------------------+------------------+-------------------+
+|    train    |         4.8         |       86.5       |        3.50       |
+|    valid    |         4.6         |      152.3       |        6.14       |
+|   Default   |         5.0         |      122.2       |        5.34       |
++-------------+---------------------+------------------+-------------------+
+2025-06-02 18:45:57.417 INFO: Saving model to MACE_models/mace_learncurve_train400_run-123_swa.model
+2025-06-02 18:45:57.633 INFO: Compiling model, saving metadata MACE_models/mace_learncurve_train400_swa_compiled.model
+2025-06-02 18:45:58.853 INFO: Done
+2025-06-03 20:54:32.311 INFO: MACE version: 0.3.6
+2025-06-03 20:54:32.311 INFO: Configuration: Namespace(config='benchmark_results/mace_learncurve_train400.yaml', name='mace_learncurve_train400', seed=123, log_dir='MACE_models', model_dir='MACE_models', checkpoints_dir='MACE_models', results_dir='MACE_models', downloads_dir='downloads', device='cuda', default_dtype='float64', distributed=False, log_level='INFO', error_table='PerAtomRMSE', model='MACE', r_max=4.0, radial_type='bessel', num_radial_basis=8, num_cutoff_basis=5, pair_repulsion=False, distance_transform='None', interaction='RealAgnosticResidualInteractionBlock', interaction_first='RealAgnosticResidualInteractionBlock', max_ell=2, correlation=3, num_interactions=3, MLP_irreps='16x0e', radial_MLP='[64, 64, 64]', hidden_irreps='128x0e + 128x1o', num_channels=64, max_L=2, gate='silu', scaling='rms_forces_scaling', avg_num_neighbors=1, compute_avg_num_neighbors=True, compute_stress=False, compute_forces=True, train_file='data/solvent_xtb_train_400.xyz', valid_file=None, valid_fraction=0.1, test_file='data/solvent_xtb_test.xyz', test_dir=None, multi_processed_test=False, num_workers=0, pin_memory=True, atomic_numbers=None, mean=None, std=None, statistics_file=None, E0s='average', keep_isolated_atoms=False, energy_key='energy_xtb', forces_key='forces_xtb', virials_key='virials', stress_key='stress', dipole_key='dipole', charges_key='charges', loss='weighted', forces_weight=100.0, swa_forces_weight=100.0, energy_weight=1.0, swa_energy_weight=1000.0, virials_weight=1.0, swa_virials_weight=10.0, stress_weight=1.0, swa_stress_weight=10.0, dipole_weight=1.0, swa_dipole_weight=1.0, config_type_weights='{"Default":1.0}', huber_delta=0.01, optimizer='adam', beta=0.9, batch_size=10, valid_batch_size=10, lr=0.01, swa_lr=0.001, weight_decay=5e-07, amsgrad=True, scheduler='ReduceLROnPlateau', lr_factor=0.8, scheduler_patience=50, lr_scheduler_gamma=0.9993, swa=True, start_swa=None, ema=False, ema_decay=0.99, max_num_epochs=50, patience=2048, foundation_model=None, foundation_model_readout=True, eval_interval=2, keep_checkpoints=False, save_all_checkpoints=False, restart_latest=False, save_cpu=False, clip_grad=10.0, wandb=False, wandb_dir=None, wandb_project='', wandb_entity='', wandb_name='', wandb_log_hypers=['num_channels', 'max_L', 'correlation', 'lr', 'swa_lr', 'weight_decay', 'batch_size', 'max_num_epochs', 'start_swa', 'energy_weight', 'forces_weight'])
+2025-06-03 20:54:32.402 INFO: CUDA version: 12.1, CUDA device: 0
+2025-06-03 20:54:32.440 INFO: Current Git commit: 3b7b691f60afdffc0cd66948e333883ae1689cd8
+2025-06-03 20:54:32.560 INFO: Since ASE version 3.23.0b1, using stress_key 'stress' is no longer safe when communicating between MACE and ASE. We recommend using a different key, rewriting energies to 'REF_stress'. You need to use --stress_key='REF_stress', to tell the key name chosen.
+2025-06-03 20:54:32.560 INFO: Using isolated atom energies from training file
+2025-06-03 20:54:32.568 INFO: Loaded 400 training configurations from 'data/solvent_xtb_train_400.xyz'
+2025-06-03 20:54:32.568 INFO: Using random 10.0% of training set for validation
+2025-06-03 20:54:32.824 INFO: Since ASE version 3.23.0b1, using stress_key 'stress' is no longer safe when communicating between MACE and ASE. We recommend using a different key, rewriting energies to 'REF_stress'. You need to use --stress_key='REF_stress', to tell the key name chosen.
+2025-06-03 20:54:32.845 INFO: Loaded 1000 test configurations from 'data/solvent_xtb_test.xyz'
+2025-06-03 20:54:32.845 INFO: Total number of configurations: train=360, valid=40, tests=[Default: 1000]
+2025-06-03 20:54:32.847 INFO: AtomicNumberTable: (1, 6, 8)
+2025-06-03 20:54:32.847 INFO: Atomic energies: [-10.707211383396714, -48.847445262804705, -102.57117256025786]
+2025-06-03 20:54:33.043 INFO: WeightedEnergyForcesLoss(energy_weight=1.000, forces_weight=100.000)
+2025-06-03 20:54:33.236 INFO: Average number of neighbors: 9.929327941459658
+2025-06-03 20:54:33.236 INFO: Selected the following outputs: {'energy': True, 'forces': True, 'virials': False, 'stress': False, 'dipoles': False}
+2025-06-03 20:54:33.312 INFO: Building model
+2025-06-03 20:54:33.402 INFO: Hidden irreps: 64x0e+64x1o+64x2e
+2025-06-03 20:54:34.861 INFO: Using stochastic weight averaging (after 36 epochs) with energy weight : 1000.0, forces weight : 100.0 and learning rate : 0.001
+2025-06-03 20:54:34.980 INFO: ScaleShiftMACE(
+  (node_embedding): LinearNodeEmbeddingBlock(
+    (linear): Linear(3x0e -> 64x0e | 192 weights)
+  )
+  (radial_embedding): RadialEmbeddingBlock(
+    (bessel_fn): BesselBasis(r_max=4.0, num_basis=8, trainable=False)
+    (cutoff_fn): PolynomialCutoff(p=5.0, r_max=4.0)
+  )
+  (spherical_harmonics): SphericalHarmonics()
+  (atomic_energies_fn): AtomicEnergiesBlock(energies=[-10.7072, -48.8474, -102.5712])
+  (interactions): ModuleList(
+    (0): RealAgnosticInteractionBlock(
+      (linear_up): Linear(64x0e -> 64x0e | 4096 weights)
+      (conv_tp): TensorProduct(64x0e x 1x0e+1x1o+1x2e -> 64x0e+64x1o+64x2e | 192 paths | 192 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 192]
+      (linear): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+      (skip_tp): FullyConnectedTensorProduct(64x0e+64x1o+64x2e x 3x0e -> 64x0e+64x1o+64x2e | 36864 paths | 36864 weights)
+      (reshape): reshape_irreps()
+    )
+    (1): RealAgnosticResidualInteractionBlock(
+      (linear_up): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+      (conv_tp): TensorProduct(64x0e+64x1o+64x2e x 1x0e+1x1o+1x2e -> 192x0e+256x1o+256x2e | 704 paths | 704 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 704]
+      (linear): Linear(192x0e+256x1o+256x2e -> 64x0e+64x1o+64x2e | 45056 weights)
+      (skip_tp): FullyConnectedTensorProduct(64x0e+64x1o+64x2e x 3x0e -> 64x0e+64x1o+64x2e | 36864 paths | 36864 weights)
+      (reshape): reshape_irreps()
+    )
+    (2): RealAgnosticResidualInteractionBlock(
+      (linear_up): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+      (conv_tp): TensorProduct(64x0e+64x1o+64x2e x 1x0e+1x1o+1x2e -> 192x0e+256x1o+256x2e | 704 paths | 704 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 704]
+      (linear): Linear(192x0e+256x1o+256x2e -> 64x0e+64x1o+64x2e | 45056 weights)
+      (skip_tp): FullyConnectedTensorProduct(64x0e+64x1o+64x2e x 3x0e -> 64x0e | 12288 paths | 12288 weights)
+      (reshape): reshape_irreps()
+    )
+  )
+  (products): ModuleList(
+    (0-1): 2 x EquivariantProductBasisBlock(
+      (symmetric_contractions): SymmetricContraction(
+        (contractions): ModuleList(
+          (0): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x3x64 (cuda:0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x64 (cuda:0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+          (1-2): 2 x Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x4x64 (cuda:0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x64 (cuda:0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+        )
+      )
+      (linear): Linear(64x0e+64x1o+64x2e -> 64x0e+64x1o+64x2e | 12288 weights)
+    )
+    (2): EquivariantProductBasisBlock(
+      (symmetric_contractions): SymmetricContraction(
+        (contractions): ModuleList(
+          (0): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x3x64 (cuda:0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x64 (cuda:0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+        )
+      )
+      (linear): Linear(64x0e -> 64x0e | 4096 weights)
+    )
+  )
+  (readouts): ModuleList(
+    (0-1): 2 x LinearReadoutBlock(
+      (linear): Linear(64x0e+64x1o+64x2e -> 1x0e | 64 weights)
+    )
+    (2): NonLinearReadoutBlock(
+      (linear_1): Linear(64x0e -> 16x0e | 1024 weights)
+      (non_linearity): Activation [x] (16x0e -> 16x0e)
+      (linear_2): Linear(16x0e -> 1x0e | 16 weights)
+    )
+  )
+  (scale_shift): ScaleShiftBlock(scale=2.471057, shift=0.000000)
+)
+2025-06-03 20:54:34.983 INFO: Number of parameters: 405008
+2025-06-03 20:54:34.983 INFO: Optimizer: Adam (
+Parameter Group 0
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: embedding
+    swa_lr: 0.001
+    weight_decay: 0.0
+
+Parameter Group 1
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: interactions_decay
+    swa_lr: 0.001
+    weight_decay: 5e-07
+
+Parameter Group 2
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: interactions_no_decay
+    swa_lr: 0.001
+    weight_decay: 0.0
+
+Parameter Group 3
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: products
+    swa_lr: 0.001
+    weight_decay: 5e-07
+
+Parameter Group 4
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: readouts
+    swa_lr: 0.001
+    weight_decay: 0.0
+)
+2025-06-03 20:54:34.983 INFO: Using gradient clipping with tolerance=10.000
+2025-06-03 20:54:34.983 INFO: Started training
+2025-06-03 20:54:37.333 INFO: Epoch None: loss=65.3744, RMSE_E_per_atom=6200.4 meV, RMSE_F=2517.3 meV / A
+2025-06-03 20:54:51.197 INFO: Epoch 0: loss=9.8561, RMSE_E_per_atom=4351.3 meV, RMSE_F=896.5 meV / A
+2025-06-03 20:55:10.601 INFO: Epoch 2: loss=4.4978, RMSE_E_per_atom=3055.9 meV, RMSE_F=595.8 meV / A
+2025-06-03 20:55:30.143 INFO: Epoch 4: loss=2.2275, RMSE_E_per_atom=1289.8 meV, RMSE_F=455.2 meV / A
+2025-06-03 20:55:49.784 INFO: Epoch 6: loss=1.8776, RMSE_E_per_atom=785.0 meV, RMSE_F=425.2 meV / A
+2025-06-03 20:56:09.290 INFO: Epoch 8: loss=0.9828, RMSE_E_per_atom=303.1 meV, RMSE_F=313.9 meV / A
+2025-06-03 20:56:28.768 INFO: Epoch 10: loss=1.0528, RMSE_E_per_atom=242.0 meV, RMSE_F=321.4 meV / A
+2025-06-03 20:56:48.131 INFO: Epoch 12: loss=0.6707, RMSE_E_per_atom=257.0 meV, RMSE_F=255.3 meV / A
+2025-06-03 20:57:07.659 INFO: Epoch 14: loss=0.6499, RMSE_E_per_atom=245.4 meV, RMSE_F=252.9 meV / A
+2025-06-03 20:57:27.169 INFO: Epoch 16: loss=0.6969, RMSE_E_per_atom=86.5 meV, RMSE_F=262.9 meV / A
+2025-06-03 20:57:46.816 INFO: Epoch 18: loss=0.5928, RMSE_E_per_atom=111.7 meV, RMSE_F=241.1 meV / A
+2025-06-03 20:58:06.322 INFO: Epoch 20: loss=0.7320, RMSE_E_per_atom=62.7 meV, RMSE_F=270.6 meV / A
+2025-06-03 20:58:25.686 INFO: Epoch 22: loss=0.3470, RMSE_E_per_atom=52.1 meV, RMSE_F=184.2 meV / A
+2025-06-03 20:58:45.163 INFO: Epoch 24: loss=0.8827, RMSE_E_per_atom=89.9 meV, RMSE_F=294.7 meV / A
+2025-06-03 20:59:04.448 INFO: Epoch 26: loss=0.5955, RMSE_E_per_atom=87.2 meV, RMSE_F=241.9 meV / A
+2025-06-03 20:59:23.812 INFO: Epoch 28: loss=0.4840, RMSE_E_per_atom=101.0 meV, RMSE_F=218.3 meV / A
+2025-06-03 20:59:43.118 INFO: Epoch 30: loss=0.5023, RMSE_E_per_atom=20.4 meV, RMSE_F=222.9 meV / A
+2025-06-03 21:00:02.398 INFO: Epoch 32: loss=0.5469, RMSE_E_per_atom=89.0 meV, RMSE_F=229.7 meV / A
+2025-06-03 21:00:21.762 INFO: Epoch 34: loss=0.6297, RMSE_E_per_atom=62.1 meV, RMSE_F=249.4 meV / A
+2025-06-03 21:00:31.245 INFO: Changing loss based on SWA
+2025-06-03 21:00:41.263 INFO: Epoch 36: loss=0.5222, RMSE_E_per_atom=44.2 meV, RMSE_F=177.6 meV / A
+2025-06-03 21:01:00.794 INFO: Epoch 38: loss=0.2916, RMSE_E_per_atom=7.6 meV, RMSE_F=164.9 meV / A
+2025-06-03 21:01:20.357 INFO: Epoch 40: loss=0.2839, RMSE_E_per_atom=6.1 meV, RMSE_F=163.3 meV / A
+2025-06-03 21:01:39.912 INFO: Epoch 42: loss=0.2775, RMSE_E_per_atom=8.8 meV, RMSE_F=159.8 meV / A
+2025-06-03 21:01:59.442 INFO: Epoch 44: loss=0.2780, RMSE_E_per_atom=12.3 meV, RMSE_F=157.8 meV / A
+2025-06-03 21:02:18.879 INFO: Epoch 46: loss=0.2609, RMSE_E_per_atom=5.0 meV, RMSE_F=156.1 meV / A
+2025-06-03 21:02:38.354 INFO: Epoch 48: loss=0.2591, RMSE_E_per_atom=6.7 meV, RMSE_F=155.0 meV / A
+2025-06-03 21:02:48.007 INFO: Training complete
+2025-06-03 21:02:48.008 INFO: Computing metrics for training, validation, and test sets
+2025-06-03 21:02:48.512 INFO: Loading checkpoint: MACE_models/mace_learncurve_train400_run-123_epoch-26.pt
+2025-06-03 21:02:48.560 INFO: Loaded model from epoch 26
+2025-06-03 21:02:48.560 INFO: Evaluating train ...
+2025-06-03 21:02:51.934 INFO: Evaluating valid ...
+2025-06-03 21:02:52.352 INFO: Evaluating Default ...
+2025-06-03 21:03:02.059 INFO: 
++-------------+---------------------+------------------+-------------------+
+| config_type | RMSE E / meV / atom | RMSE F / meV / A | relative F RMSE % |
++-------------+---------------------+------------------+-------------------+
+|    train    |         35.0        |      150.5       |        6.09       |
+|    valid    |         35.0        |      195.7       |        7.89       |
+|   Default   |         36.2        |      167.6       |        7.32       |
++-------------+---------------------+------------------+-------------------+
+2025-06-03 21:03:02.059 INFO: Saving model to MACE_models/mace_learncurve_train400_run-123.model
+2025-06-03 21:03:02.290 INFO: Compiling model, saving metadata to MACE_models/mace_learncurve_train400_compiled.model
+2025-06-03 21:03:03.662 INFO: Loading checkpoint: MACE_models/mace_learncurve_train400_run-123_epoch-48_swa.pt
+2025-06-03 21:03:03.837 INFO: Loaded model from epoch 48
+2025-06-03 21:03:03.837 INFO: Evaluating train ...
+2025-06-03 21:03:07.196 INFO: Evaluating valid ...
+2025-06-03 21:03:07.624 INFO: Evaluating Default ...
+2025-06-03 21:03:17.366 INFO: 
++-------------+---------------------+------------------+-------------------+
+| config_type | RMSE E / meV / atom | RMSE F / meV / A | relative F RMSE % |
++-------------+---------------------+------------------+-------------------+
+|    train    |         7.2         |       85.8       |        3.47       |
+|    valid    |         6.7         |      155.0       |        6.25       |
+|   Default   |         7.8         |      122.0       |        5.33       |
++-------------+---------------------+------------------+-------------------+
+2025-06-03 21:03:17.366 INFO: Saving model to MACE_models/mace_learncurve_train400_run-123_swa.model
+2025-06-03 21:03:17.597 INFO: Compiling model, saving metadata MACE_models/mace_learncurve_train400_swa_compiled.model
+2025-06-03 21:03:18.839 INFO: Done

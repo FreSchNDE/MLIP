@@ -1,0 +1,6 @@
+config,train_size,train_time_s,rmse_e_meV,rmse_f_meV
+mace_learncurve_train200,200,280.47,9.0,156.2
+mace_learncurve_train400,400,530.1,4.6,152.3
+mace_learncurve_train1000,1000,1290.85,3.5,69.3
+mace_learncurve_train2000,2000,2564.82,3.8,64.5
+mace_learncurve_train4000,4000,5147.18,2.1,48.7
