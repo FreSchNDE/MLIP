@@ -1,0 +1,3 @@
+[submodule "python-ace"]
+	path = python-ace
+	url = https://github.com/ICAMS/python-ace.git
