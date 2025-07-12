@@ -17,21 +17,21 @@ Both full-scale training and low-cost fine-tuning were tested. The fine-tuned mo
 
 ```
 .
-├── data/                        						# xTB-labeled training and test structures
-├── MACE_models/                 						# Trained MACE models (compiled and raw)
-├── benchmark_results/           						# Hyperparameter scan and learning curves
-├── moldyn/                      						# MD results, RDFs, MSDs, XYZ trajectories
-├── figures/                                            # Tutorial illustrations
-├── MSD.py                                              # Script for MSD computation
-├── T01-MACE-Practice-I.ipynb							# Tutorial file
-├── T02-MACE-Practice-II.ipynb							# Tutorial file
-├── Tutorial_Descriptors_MLIP_ResearchLab_2025.ipynb	# Tutorial file
-├── 1-MACE-parameters.ipynb								# Report: Hyperparameter sweep
-├── 2-MACE-learning-curve.ipynb							# Report: Learning curve creation
-├── 3-MACE-evaluation.ipynb								# Report: Static model evaluation
-├── 4-MACE-fineTune.ipynb								# Report: Fine-tuned alternative model
-├── 5-MACE-MD.ipynb										# Report: Molecular dynamics (isolated molecule and liquid)
-├── Advanced Research Laboratory MLIP.pdf               # Final report
+├── data/                                             # xTB-labeled training and test structures
+├── MACE_models/                                      # Trained MACE models (compiled and raw)
+├── benchmark_results/                                # Hyperparameter scan and learning curves
+├── moldyn/                                           # MD results, RDFs, MSDs, XYZ trajectories
+├── figures/                                          # Tutorial illustrations
+├── MSD.py                                            # Script for MSD computation
+├── T01-MACE-Practice-I.ipynb                         # Tutorial file
+├── T02-MACE-Practice-II.ipynb                        # Tutorial file
+├── Tutorial_Descriptors_MLIP_ResearchLab_2025.ipynb  # Tutorial file
+├── 1-MACE-parameters.ipynb                           # Report: Hyperparameter sweep
+├── 2-MACE-learning-curve.ipynb                       # Report: Learning curve creation
+├── 3-MACE-evaluation.ipynb                           # Report: Static model evaluation
+├── 4-MACE-fineTune.ipynb                             # Report: Fine-tuned alternative model
+├── 5-MACE-MD.ipynb                                   # Report: Molecular dynamics (isolated molecule and liquid)
+├── Advanced Research Laboratory MLIP.pdf             # Final report
 ```
 
 ## Key Results
